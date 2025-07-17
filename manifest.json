@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "GPT Response Modifier",
+  "name": "LLMtrap",
   "version": "1.0",
   "description": "Modifies ChatGPT responses in the browser",
   "permissions": ["scripting"],
@@ -13,6 +13,6 @@
     }
   ],
   "action": {
-    "default_title": "GPT Modifier"
+    "default_title": "LLMtrap"
   }
 }
