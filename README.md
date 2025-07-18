@@ -6,9 +6,8 @@ This repository hosts a Chrome extension designed as a **Research Demo** to modi
 
 **Note**: This is a controlled test environment project. Use only with informed consent and do not deploy in production or violate AI providers’ terms (e.g., [OpenAI Terms](https://openai.com/policies/terms-of-use/)).
 
-
-
-**Note**: This is a controlled test environment project. Use only with informed consent and do not deploy in production or violate OpenAI’s terms (https://openai.com/policies/terms-of-use/).
+## Video Demo:
+[![Watch the video](https://img.youtube.com/vi/AdVzE7OgHgQ/0.jpg)](https://youtu.be/AdVzE7OgHgQ)
 
 ## Features
 
