@@ -69,6 +69,11 @@ python server.py
 - **Real-Time Updates**: Achieved 95% success rate in modifying code blocks across 50 test cases (Python, JavaScript, Bash, etc.), with ~200ms latency.
 - **Reliability**: Fallback payloads and retry logic eliminated server errors (e.g., Failed to fetch).
 
+### How it works?
+- It uses a `MutationObserver` to detect dynamic content on the ChatGPT UI. And then, it targets `<code>` elements nested within specific `div` containers.
+- It detects language labels like bash, python, javascript, etc. and fetches the malicious code matching the language.
+- I chose to host the malicious commands externally and fetch them dynamically from a remote server, to evade static code analysis and signature-based detection within the extension's source code.
+
 ### Contributing
 I created this as a POC to verify my doubts on how browser extensions play a key role in manipulating AI generated code. So, any **feedback and contributions are welcome**! Open an issue or submit a pull request with improvements. For collaboration, contact me via [LinkedIn](https://www.linkedin.com/in/sai-kiran-mididoddi/).
 
